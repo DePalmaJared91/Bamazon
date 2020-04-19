@@ -14,9 +14,11 @@ var connection = mysql.createConnection({
 connection.connect(function (err){
     if(err) throw err;
     console.log("Connected!");
+    displayProducts();
 });
 
-displayProducts();
+
+
 var displayProducts = function() {
     var query = "Select * FROM products";
     connection.query(query, function(err, res){
@@ -43,12 +45,12 @@ var requestProduct = function() {
 
     }]).then(function(answer) {
 
-        var query = "Select stock_quantity, price, product_sales, department_name FROM products WHERE ?";
+        var query = "Select stock_quantity, price, department_name FROM products WHERE ?";
         connection.query(query, { item_id: answer.productID}, function(err, res){
             if(err) throw err;
             var available_stock = res[0].stock_quantity;
             var price_per_unit = res[0].price;
-            var productSales = res[0].product_sales;
+            
             var productDepartment = res[0].department_name;
 
             if (available_stock >= answer.productUnits){
@@ -74,8 +76,8 @@ var completePurchase = function(availableStock, price, productSales, productDepa
 
     var query = "UPDATE products SET ? WHERE ?";
         connection.query(query,[{
-        stock_quantity: updatedStockQuantity,
-        product_sales: updatedProductSales
+        stock_quantity: updatedStockQuantity
+        
     }, {
         item_id: selectedProductID
 
